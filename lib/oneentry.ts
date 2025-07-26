@@ -1,16 +1,26 @@
-import { defineOneEntry } from "oneentry";
+// Import the `defineOneEntry` function to create an API client instance
+import { defineOneEntry } from 'oneentry';
 
-import retrieveRefreshToken from "@/actions/auth/retrieveRefreshToken";
-import storeRefreshToken from "@/actions/auth/storeRefreshToken";
+// Import helper functions for handling refresh tokens
+import retrieveRefreshToken from '@/actions/auth/retrieveRefreshToken';
+import storeRefreshToken from '@/actions/auth/storeRefreshToken';
 
+// Define the type for the API client, which can initially be `null`
 export type ApiClientType = ReturnType<typeof defineOneEntry> | null;
 
+// Declare a variable to hold the API client instance, initially set to `null`
 let apiClient: ApiClientType = null;
 
-
+/**
+ * Function to initialize the API client with a custom configuration.
+ * This function ensures the client is created only once and reuses the same instance.
+ */
 async function setupApiClient(): Promise<ReturnType<typeof defineOneEntry>> {
   // Retrieve the API URL from environment variables
-  const apiUrl = process.env.ONEENTRY_PROJECT_URL;
+  const apiUrl = process.env.ONEENRTY_PROJECT_URL;
+  // Debug: Log environment variables (do not log secrets in production)
+  console.log('DEBUG ONEENTRY_PROJECT_URL:', apiUrl);
+  console.log('DEBUG ONEENTRY_TOKEN:', process.env.ONEENTRY_TOKEN ? '[SET]' : '[NOT SET]');
 
   // Throw an error if the API URL is not defined
   if (!apiUrl) {
@@ -25,7 +35,7 @@ async function setupApiClient(): Promise<ReturnType<typeof defineOneEntry>> {
 
       // Create a new instance of the API client with the required configuration
       apiClient = defineOneEntry(apiUrl, {
-        token: process.env.ONENETRY_TOKEN, // Token for authentication
+        token: process.env.ONEENTRY_TOKEN, // Token for authentication
         langCode: 'en_US', // Language code for the API
         auth: {
           refreshToken: refreshToken || undefined, // Use the retrieved refresh token or `undefined`
